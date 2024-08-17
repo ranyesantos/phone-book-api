@@ -1,0 +1,18 @@
+@import './base.css';
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+#app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Faz com que a div "app" ocupe 100% da altura da janela */
+  background-color: rgb(5, 63, 170);
+}
+
+
+@media (hover: hover) {
+  a:hover {
+    background-color: hsla(160, 100%, 37%, 0.2);
+  }
+}
+
