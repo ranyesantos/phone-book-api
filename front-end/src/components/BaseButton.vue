@@ -11,8 +11,8 @@
     export default {
         props: {
             type: {
-            type: String,
-            default: 'button',
+                type: String,
+                default: 'button',
             },
         },
     }
@@ -21,21 +21,19 @@
 
 <style scoped>
 
-    .base-button {
-    width: 490px;
-    height: 62px;
+.base-button {
+    
     border-radius: 30px;
     background-color: rgb(5, 63, 170);
     color: rgb(255, 255, 255);
-    font-size: 24px;
     border: none;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    }
+}
 
-    .base-button:hover {
+.base-button:hover {
     background-color: rgb(4, 50, 135); 
-    }
+}
 
 </style>
   

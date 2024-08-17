@@ -1,23 +1,13 @@
 <template>
-    <div class="main">
+    <div class="master">
         <div class="login-container">
             <h1>Acesse a sua conta</h1>
-            <form>
+            <form @submit.prevent="login">
 
-                <BaseInput
-                    type="email"
-                    placeholder="E-mail"
-                    v-model="email"
-                    class="baseinput"
-                />
-                <BaseInput
-                    type="password"
-                    placeholder="Senha"
-                    v-model="password"
-                    class="baseinput"
-                />
+                <input type="text" placeholder="E-mail" v-model="email" class="base-input"/>
+                <input type="password" placeholder="Senha" v-model="password" class="base-input"/>
 
-                <BaseButton type="submit">Entrar</BaseButton>
+                <BaseButton class="base-button" type="submit">Entrar</BaseButton>
             </form>
 
             <p>Não tem uma conta? <a @click="registerRedirect">Registre-se</a></p>
@@ -26,41 +16,91 @@
     </div>
 </template>
 
-
 <script>
-    import BaseInput from '../components/BaseInput.vue';
-    import BaseButton from '../components/BaseButton.vue';
-    import { useRouter } from 'vue-router';
 
-    export default {
-        components: {
-            BaseInput,
-            BaseButton,
-        },
-        setup() {
-            const router = useRouter(); // Obtém o roteador
+import BaseButton from '../components/BaseButton.vue';
+import { useRouter } from 'vue-router';
+import api from '../services/apiService';
 
-            const registerRedirect = () => {
-                router.push('/register'); // Navega para a rota /register
-            };
+export default {
 
-            return {
-                registerRedirect
-            };
+    
+
+    components: {
+        BaseButton,
+    },
+
+    data() {
+        return {
+            email: '',
+            password: ''
         }
+    },
+
+    setup() {
+        const router = useRouter();
+
+        const registerRedirect = () => {
+            router.push('/register'); 
+        };
+
+        return {
+            registerRedirect
+        };
+    },
+    methods: {
+        async login() {
+    try {
+        const response = await api.post('/login', {
+            email: this.email,
+            password: this.password,
+        });
+        this.token = response.data.token;
+        localStorage.setItem('authToken', this.token);
+        this.$router.push('/home')
+    } catch (error) {
+        console.error('Erro ao registrar:', error.response.data.message);
     }
+}
+    }
+}
 </script>
 
-
 <style>
-   .main {
+.master {
     font-family: 'Roboto', 'sans-serif';
     display: flex;
     justify-content: center;
     height: 100vh;
+    margin: 0;
     align-items: center;
-    background-color: rgb(5, 63, 170);
+    background-color: #5743c9;
     
+}
+
+.base-input {
+    width: 480px;
+    height: 65px;
+    margin-bottom: 45px; 
+    border-radius: 4px;
+    border: 0.9px solid rgba(61, 61, 61, 0.384);
+    border-color: none;
+    text-indent: 20px;
+    font-size: 22px;
+    max-width: 480px;
+}
+
+input::placeholder {
+    color: rgba(56, 55, 55, 0.788);
+    font-size: 18px;
+    left: 3px;
+    opacity: 0.9;
+}
+
+.base-button {
+    width: 490px;
+    height: 62px;
+    font-size: 24px;
 }
 
 .login-container {
@@ -84,7 +124,6 @@ form {
     width: 100%;
     margin-top: 40px;
 }
-
 
 
 p {

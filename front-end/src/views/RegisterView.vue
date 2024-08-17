@@ -1,29 +1,14 @@
 <template>
     <div class="main">
-        <div class="login-container">
+        <div class="register-container">
             <h1>Crie a sua conta</h1>
-            <form>
+            <form @submit.prevent="register">
 
-                <BaseInput
-                    type="text"
-                    placeholder="Nome"
-                    v-model="Nome"
-                    class="baseinput"
-                />
-                <BaseInput
-                    type="email"
-                    placeholder="E-mail"
-                    v-model="email"
-                    class="baseinput"
-                />
-                <BaseInput
-                    type="password"
-                    placeholder="Senha"
-                    v-model="password"
-                    class="baseinput"
-                />
+                <input type="text" placeholder="Nome" v-model="name" class="base-input"/>
+                <input type="text" placeholder="E-mail" v-model="email" class="base-input"/>
+                <input type="password" placeholder="Senha" v-model="password" name="password" class="base-input"/>
 
-                <BaseButton type="submit">Cadastrar</BaseButton>
+                <BaseButton class="base-button" type="submit">Cadastrar</BaseButton>
 
             </form>
             <p>Já possui uma conta? <a @click="loginRedirect">Entrar</a></p>
@@ -33,27 +18,52 @@
 
 
 <script>
-    import BaseInput from '../components/BaseInput.vue';
-    import BaseButton from '../components/BaseButton.vue';
-    import { useRouter } from 'vue-router';
+import BaseButton from '../components/BaseButton.vue';
+import { useRouter } from 'vue-router';
+import api from '../services/apiService';
 
-    export default {
-        components: {
-            BaseInput,
-            BaseButton,
-        },
-        setup() {
-            const router = useRouter(); // Obtém o roteador
+export default {
 
-            const loginRedirect = () => {
-                router.push('/'); // Navega para a rota /register
-            };
+    components: {
+        BaseButton,
+    },
+    data() {
+        return {
+        email: '',
+        password: '',
+        };
+    },
+    setup() {
+        const router = useRouter(); 
 
-            return {
-                loginRedirect
-            };
-        },
+        const loginRedirect = () => {
+            router.push('/'); 
+        };
+        
+        return {
+            loginRedirect
+        };
+    },
+    methods: {
+        async register() {
+            try {
+
+                const response = await api.post('/register', {
+                    name: this.name,    
+                    email: this.email,
+                    password: this.password
+                });
+
+                this.token = response.data.token;
+                localStorage.setItem('authToken', this.token);
+                this.$router.push('/');
+
+            } catch (error) {
+                console.error('Erro ao registrar:', error.response.data.message);
+            }
+        }
     }
+}
 </script>
 
 
@@ -64,18 +74,18 @@
     justify-content: center;
     height: 100vh;
     align-items: center;
-    background-color: rgb(5, 63, 170);
+    background-color: #333;
     
 }
 
-.login-container {
+.register-container {
     display: flex;
     justify-content: center;
     flex-direction: column;
     align-items: center;
-    background-color: rgb(255, 255, 255);
+    background-color: rgb(216, 31, 31);
     width: 580px;
-    height: 65vh;
+    height: 590px;
     box-shadow: 0 4px 8px 2px rgba(26, 25, 25, 0.274);
     border-radius: 2.5px;
 }
@@ -90,7 +100,30 @@ form {
     margin-top: 40px;
 }
 
+.base-input {
+    width: 480px;
+    height: 65px;
+    margin-bottom: 45px; 
+    border-radius: 4px;
+    border: 0.9px solid rgba(61, 61, 61, 0.384);
+    border-color: none;
+    text-indent: 20px;
+    font-size: 22px ;
+}
 
+input::placeholder {
+    color: rgba(56, 55, 55, 0.788);
+    font-size: 18px;
+    left: 3px;
+    opacity: 0.9;
+   height: 65px;
+}
+
+.base-button {
+    width: 490px;
+    height: 62px;
+    font-size: 24px;
+}
 
 p {
     font-size: 16px;
