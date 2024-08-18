@@ -24,8 +24,6 @@ import api from '../services/apiService';
 
 export default {
 
-    
-
     components: {
         BaseButton,
     },
@@ -55,11 +53,26 @@ export default {
             email: this.email,
             password: this.password,
         });
-        this.token = response.data.token;
-        localStorage.setItem('authToken', this.token);
-        this.$router.push('/home')
+        {
+            if (response.data && response.data.token) {
+                const token = response.data.token;
+
+                
+                localStorage.setItem('authToken', token);
+
+                console.log('Token:', token);
+
+                
+                this.$router.push('/home');  
+
+            } else {
+                console.log('Credenciais Incorretas')
+            }
+        }   
+
     } catch (error) {
         console.error('Erro ao registrar:', error.response.data.message);
+        this.$router.push('/');
     }
 }
     }

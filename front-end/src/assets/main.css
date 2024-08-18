@@ -3,10 +3,9 @@
 
 #app {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh; /* Faz com que a div "app" ocupe 100% da altura da janela */
-  background-color: rgb(5, 63, 170);
+  height: 100vh; 
+  background-color: #333;
+  flex-direction: column;
 }
 
 

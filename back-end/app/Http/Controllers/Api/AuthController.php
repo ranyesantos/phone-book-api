@@ -18,7 +18,6 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password)
         ]);
-        $token = $user->createToken('api-token')->plainTextToken;
 
         return response(200);
 
@@ -34,10 +33,10 @@ class AuthController extends Controller
 
             $token = $request->user()->createToken('api-token')->plainTextToken;
 
-            $response = [
-                'token' => $token
-            ];
-            return response($response);
+                $response = [
+                    'token' => $token
+                ];
+                return response($response);
 
         } else {
 
