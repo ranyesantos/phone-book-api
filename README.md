@@ -1,4 +1,4 @@
-### Vídeo explicando o projeto: https://www.youtube.com/watch?v=wUdoHM-oWxc
+### Vídeo explicando o código: https://www.youtube.com/watch?v=wUdoHM-oWxc
 ---
 ## Como rodar:
 ## Após ter clonado o repositório e selecionar o diretório, rode os seguintes comandos na pasta back-end:
