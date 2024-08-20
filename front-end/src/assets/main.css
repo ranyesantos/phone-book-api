@@ -4,14 +4,17 @@
 #app {
   display: flex;
   height: 100vh; 
-  background-color: #333;
+  background: radial-gradient(circle, rgba(195,188,191,1) 0%, rgba(107,154,237,1) 0%);
   flex-direction: column;
 }
 
 
-@media (hover: hover) {
+@media (max-width: 1040px) {
   a:hover {
     background-color: hsla(160, 100%, 37%, 0.2);
+  }
+  #app {
+    height: 100%; 
   }
 }
 

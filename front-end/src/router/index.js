@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
-// Cria o roteador
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -26,6 +26,21 @@ const router = createRouter({
       component: () => import('../views/contacts/NewContactView.vue'),
       meta: { requiresAuth: true }
     },
+    {
+      path: '/contacts/:id',
+      name: 'showContact',
+      component: () => import('../views/contacts/ShowView.vue'), 
+      meta: { requiresAuth: true },
+      props: true
+    },
+    {
+      path: '/contacts/:id/edit',
+      name: 'editContact',
+      component: () => import('../views/contacts/EditView.vue'), 
+      meta: { requiresAuth: true },
+      props: true 
+    },
+    
   ]
 });
 

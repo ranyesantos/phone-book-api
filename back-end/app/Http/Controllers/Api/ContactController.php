@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ContactRequest;
 use App\Models\Contact;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class ContactController extends Controller
 {
@@ -20,13 +20,19 @@ class ContactController extends Controller
         ],200);
     }
 
+    public function show(Contact $contact): JsonResponse
+    {
+        return response()->json([
+            'contact' => $contact
+        ],200);
+    }
+
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): JsonResponse
+    public function store(ContactRequest $request, Contact $contact): JsonResponse
     {
-        
-        $contact = new Contact();
+
         $contact->name = $request->name;
         $contact->phone = $request->phone;
         $contact->email = $request->email;
@@ -46,16 +52,36 @@ class ContactController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(ContactRequest $request, Contact $contact): JsonResponse
     {
-        //
+
+        $contact->update([
+            'name' => $request->name,
+            'phone'=> $request->phone,
+            'email'=> $request->email
+        ]);
+
+        if ($request->hasFile('profile_picture')) {
+            $imagePath = $request->file('profile_picture')->store('profile_pictures', 'public');
+            $contact->profile_picture = $imagePath;
+        }
+
+        return response()->json([
+            'contact' => $contact
+        ],200);
+
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Contact $contact): JsonResponse
     {
-        //
+        $contact->delete();
+
+        return response()->json([
+            'status' => true,
+            'message' => "apagado com sucesso",
+        ],200);
     }
 }

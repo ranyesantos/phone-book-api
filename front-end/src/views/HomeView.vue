@@ -1,9 +1,9 @@
 <template>
   <Navbar />
   <div class="main">
-    <SideBar />
+    <SideBar class="sidebar"/>
     <section class="content">
-      <ListingComponent text="Contatos" :headers="headers" :items="items"/>
+      <ListingComponent text="Contatos" class="listingComp" :headers="headers" :contacts="contacts"/>
       <AddButton redirectUrl="/new" />
     </section>
   </div>
@@ -17,21 +17,27 @@ import AddButton from '../components/AddButton.vue';
 import api from '../services/apiService';
 
 export default {
+  props: ['id'],
   components: {
+    
     Navbar,
     SideBar,
     ListingComponent,
     AddButton
   },
+
   data() {
     return {
-      headers: ['Nome', 'Número do telefone', 'Email', ],
-      items: []
+      headers: ['Nome', 'Número de telefone', 'Email', ],
+      contacts: []
+      
     };
   },
+
   mounted() {
-    this.fetchContacts(); // Chama fetchContacts quando o componente é montado
+    this.fetchContacts();
   },
+
   methods: {
     async fetchContacts() {
       try {
@@ -41,11 +47,13 @@ export default {
             Authorization: `Bearer ${token}`
           }
         });
-        this.items = response.data.contacts;
+        this.contacts = response.data.contacts;
       } catch (error) {
         console.error('erro ao buscar contatos:', error);
+        return;
       }
-    }
+    },
+
   }
 
 }
@@ -60,20 +68,32 @@ export default {
 .main {
   display: flex;
   flex: 1;
-  margin-top: 60px; /* Espaço para a altura da navbar */
+  margin-top: 80px; 
+  overflow: hidden;
 }
 
 
 .content {
-  margin-left: 280px; /* Largura da sidebar */
+  margin-left: 220px;
   margin-right: 10px;
   flex: 1;
-  padding: 0; /* Espaçamento interno */
-  background-color: #f8f9fa; /* Cor de fundo para a área de conteúdo */
+  padding: 0; 
+  background-color: #f8f9fa; 
   border-radius: 12px;
   margin-bottom: 8px;
   height: 100%;
   min-height: 100%;
 }
+@media screen and (max-width: 1040px){
+ 
+  .main {
+    margin: 0;
+  }
+  
+  .content {
+    margin: 0; 
+    border-radius: 0;
+  }
 
+}
 </style>

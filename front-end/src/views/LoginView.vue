@@ -2,13 +2,19 @@
     <div class="master">
         <div class="login-container">
             <h1>Acesse a sua conta</h1>
-            <form @submit.prevent="login">
-
-                <input type="text" placeholder="E-mail" v-model="email" class="base-input"/>
-                <input type="password" placeholder="Senha" v-model="password" class="base-input"/>
-
+            <form @submit.prevent="login" class="form-container">
+                <div class="login-box">
+    
+                    <input type="text" required placeholder="E-mail" v-model="email" class="base-input"/>
+    
+                    <input type="password" required placeholder="Senha" v-model="password" class="base-input"/>
+                    <div class="error">
+                        <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+                    </div>
+                </div>
                 <BaseButton class="base-button" type="submit">Entrar</BaseButton>
             </form>
+            
 
             <p>Não tem uma conta? <a @click="registerRedirect">Registre-se</a></p>
 
@@ -19,7 +25,6 @@
 <script>
 
 import BaseButton from '../components/BaseButton.vue';
-import { useRouter } from 'vue-router';
 import api from '../services/apiService';
 
 export default {
@@ -31,50 +36,53 @@ export default {
     data() {
         return {
             email: '',
-            password: ''
+            password: '',
+            errorMessage: '' 
         }
     },
-
-    setup() {
-        const router = useRouter();
-
-        const registerRedirect = () => {
-            router.push('/register'); 
-        };
-
-        return {
-            registerRedirect
-        };
+    mounted() {
+        if (!sessionStorage.getItem('pageReloaded')) {
+        sessionStorage.setItem('pageReloaded', 'true');
+        
+        window.location.reload();
+        } else {
+        sessionStorage.removeItem('pageReloaded');
+        }
     },
+    
     methods: {
+        
+
+        registerRedirect() {
+            this.$router.push({ name: 'register' });
+        },
+
         async login() {
-    try {
-        const response = await api.post('/login', {
-            email: this.email,
-            password: this.password,
-        });
-        {
-            if (response.data && response.data.token) {
-                const token = response.data.token;
+            try {
+                const response = await api.post('/login', {
+                    email: this.email,
+                    password: this.password,
+                });
+                if (response.status === 201) {
+                    const token = response.data.token;
 
-                
-                localStorage.setItem('authToken', token);
+                    localStorage.setItem('user', JSON.stringify(response.data.user));
+                    localStorage.setItem('authToken', token);
+                    this.$router.push({ name: 'home' });
 
-                console.log('Token:', token);
+                } else {
+                    console.log('Credenciais Incorretas')
+                }
 
-                
-                this.$router.push('/home');  
-
-            } else {
-                console.log('Credenciais Incorretas')
+            } catch (error) {
+                if (error.response && error.response.data && error.response.data.message) {
+                    this.errorMessage = error.response.data.message;
+                } else {
+                    this.errorMessage = 'Erro desconhecido';
+                }
+                console.error('Erro ao registrar:', this.errorMessage);
             }
-        }   
-
-    } catch (error) {
-        console.error('Erro ao registrar:', error.response.data.message);
-        this.$router.push('/');
-    }
-}
+        }
     }
 }
 </script>
@@ -87,10 +95,34 @@ export default {
     height: 100vh;
     margin: 0;
     align-items: center;
-    background-color: #5743c9;
-    
+    background: rgb(195,188,191);
+    background: radial-gradient(circle, rgba(195,188,191,1) 0%, rgba(107,154,237,1) 100%);
+}
+.error {
+    min-height: 30px;
+    display: block;
+    justify-content: flex-start;
+    align-items: center;
+    position: relative;
+    margin-left: 10px;
+    color: transparent;
+    p {
+        margin-top: 0px;
+        font-size: 15px;
+        color: red;
+    }
 }
 
+.login-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-box {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 3px;
+}
 .base-input {
     width: 480px;
     height: 65px;
@@ -102,7 +134,16 @@ export default {
     font-size: 22px;
     max-width: 480px;
 }
-
+/* .error {
+    color: red;
+    padding: 2px;
+    padding-bottom: 40px;
+    margin: 0;
+    background-color: transparent;
+    p {
+        font-size: 21px;
+    }
+} */
 input::placeholder {
     color: rgba(56, 55, 55, 0.788);
     font-size: 18px;
@@ -125,7 +166,7 @@ input::placeholder {
     width: 580px;
     height: 550px;
     box-shadow: 0 4px 8px 2px rgba(26, 25, 25, 0.274);
-    border-radius: 2.5px;
+    border-radius: 29px;
 }
 
 
@@ -140,8 +181,8 @@ form {
 
 
 p {
-    font-size: 16px;
-    color: rgb(56, 56, 56);
+    font-size: 20px;
+    color: rgb(0, 0, 0);
     margin-top: 20px;
     text-align: center;
 }
@@ -160,29 +201,41 @@ a:hover {
     background-color: transparent;
 }
 
-@media (max-width: 650px) {
+@media (max-width: 1040px) {
     .login-container {
-        width: 60%;
+        height: 70%;
+        width: 90%;
         max-width: 100%;
         margin-top: 0;
         padding: 10px;
     }
 
-    input {
+    .login-box {
+        display: flex;
+        flex-direction: column;
         width: 100%;
-        height: 50px;
-        margin-bottom: 15px;
-        font-size: 14px;
     }
 
-    button {
+    .base-input {
         width: 100%;
         height: 50px;
-        font-size: 16px;
+        margin-bottom: 18px;
+        font-size: 14px;
+    }
+    .base-button {
+        margin-top: 10px;
+        max-width: 100%;
+    }
+    .form-container {
+        width: 100%;
+    }
+
+    .error {
+        padding-bottom: 0;
     }
 
     p {
-        font-size: 14px;
+        font-size: 16px;
         margin-top: 10px;
     }
 }

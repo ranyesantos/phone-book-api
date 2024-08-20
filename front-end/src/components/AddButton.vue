@@ -19,7 +19,7 @@ export default {
         handleClick() {
             if (this.redirectUrl) {
                 this.$router.push(this.redirectUrl).then(() => {
-                    window.location.reload(); // Recarrega a página após o redirecionamento
+                    window.location.reload(); 
                 });
             }
         }
@@ -30,7 +30,7 @@ export default {
 
 <style scoped>
 .add-button {
-    position: absolute;
+    position: fixed;
     bottom: 60px; 
     right: 60px;
     width: 90px;
@@ -50,5 +50,14 @@ export default {
 .add-button:hover {
     background-color: #636464;
 }
-
+@media screen and (max-width: 1040px) {
+  .add-button{
+    bottom: 50px; 
+    right: 30px;
+    width: 70px;
+    height: 70px;
+    padding: 0; 
+    font-size: 47px; 
+  }
+}
 </style>

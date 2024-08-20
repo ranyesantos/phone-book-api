@@ -9,7 +9,7 @@
 export default {
   data() {
     return {
-      inputValue: '' // Valor interno do input
+      inputValue: ''
     };
   },
   watch: {

@@ -1,31 +1,36 @@
 <template>
     <aside class="sidebar">
         <ul class="sidebar-menu">
-            <li><router-link to="/dashboard" class="sidebar-item"><i class="fa-solid fa-user"></i>Contatos</router-link></li>
+            <li><router-link to="/home" class="sidebar-item"><i class="fa-solid fa-user"></i>Contatos</router-link></li>
+            <logoutButton class="logout-btn" />
         </ul>
+        
     </aside>
 </template>
 
 <script>
+    import logoutButton from './logoutButton.vue'
     export default {
         name: 'Sidebar',
+        components: {
+            logoutButton
+
+        }
     }
 </script>
 
 <style scoped>
 .sidebar {
-    position: fixed; /* Fixa a sidebar na tela */
-    top: 60px; /* Define a posição da sidebar abaixo da navbar (ajuste conforme necessário) */
+    position: fixed;
+    top: 60px; 
     left: 0;
-    width: 250px;
-    height: calc(100vh - 60px); /* Altura total da tela menos a altura da navbar */
-    background-color: #333;
+    background: rgb(195,188,191);
+    background: radial-gradient(circle, rgba(195,188,191,1) 0%, rgba(107,154,237,1) 0%);
     color: white;
     padding: 15px;
+    width: 190px;
+    height: 100%;
 }
-
-
-
 
 .sidebar-menu {
     display: flex;
@@ -35,6 +40,19 @@
     padding: 0;
     margin: 0;
 }
+.logout-btn {
+    position: fixed;
+    bottom: 60px;
+    left: 40px;
+    background-color: transparent;
+    color: rgb(255, 255, 255);
+    border: none;
+    width: 60px;
+    height: 60px;
+    font-size: 20px;
+}
+
+
 
 .sidebar-item {
     display: flex;
@@ -45,15 +63,21 @@
     margin-bottom: 10px;
     color: white;
     text-decoration: none;
-    i {
-        font-size: 20px;
-        margin-right: 20px;
-    }
 }
 
+.sidebar-item i {
+    font-size: 20px;
+    margin-right: 20px;
+}
 
 .sidebar-item:hover {
-    background-color: #575757;
-    border-radius: 4px;
+    background-color: #ecdede21;
+    border-radius: 7px;
+}
+
+@media screen and (max-width: 1040px) {
+  .sidebar {
+    display: none;
+  }
 }
 </style>

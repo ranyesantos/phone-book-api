@@ -4,10 +4,26 @@
             <h1>Crie a sua conta</h1>
             <form @submit.prevent="register">
 
-                <input type="text" placeholder="Nome" v-model="name" class="base-input"/>
-                <input type="text" placeholder="E-mail" v-model="email" class="base-input"/>
-                <input type="password" placeholder="Senha" v-model="password" name="password" class="base-input"/>
+                <div class="input-box">
+                    <input type="text" placeholder="Nome" required v-model="name" class="base-input"/>
+                    <div class="error">
+                        <p v-if="errors.name" class="error-message">{{ errors.name }}</p>
+                    </div>
+                </div>
+                <div class="input-box">
+                    
+                    <input type="text" placeholder="E-mail" required v-model="email" class="base-input"/>
+                    <div class="error">
+                        <p v-if="errors.email" class="error-message">{{ errors.email }}</p>
+                    </div>
+                </div>
 
+                <div class="input-box">
+                    <input type="password" placeholder="Senha" required v-model="password" name="password" class="base-input"/>
+                    <div class="error">
+                        <p v-if="errors.password" class="error-message">{{ errors.password }}</p>
+                    </div>
+                </div>
                 <BaseButton class="base-button" type="submit">Cadastrar</BaseButton>
 
             </form>
@@ -19,7 +35,6 @@
 
 <script>
 import BaseButton from '../components/BaseButton.vue';
-import { useRouter } from 'vue-router';
 import api from '../services/apiService';
 
 export default {
@@ -29,29 +44,38 @@ export default {
     },
     data() {
         return {
-        email: '',
-        password: '',
+            name:'',
+            email:'',
+            password: '',
+            errors: {
+                "name": '',
+                "email": '',
+                "password": '',
+            },
         };
     },
-    setup() {
-        const router = useRouter(); 
 
-        const loginRedirect = () => {
-            router.push('/'); 
-        };
-        
-        return {
-            loginRedirect
-        };
+    mounted() {
+    if (!sessionStorage.getItem('pageReloaded')) {
+        sessionStorage.setItem('pageReloaded', 'true');
+        window.location.reload();
+    } else {
+        sessionStorage.removeItem('pageReloaded');
+    }
     },
+
     methods: {
+        loginRedirect() {
+            this.$router.push({ name: 'login' });
+        },
+        
         async register() {
             try {
-
                 const response = await api.post('/register', {
                     name: this.name,    
                     email: this.email,
                     password: this.password
+                    
                 });
 
                 this.token = response.data.token;
@@ -59,7 +83,11 @@ export default {
                 this.$router.push('/');
 
             } catch (error) {
-                console.error('Erro ao registrar:', error.response.data.message);
+                if (error.response && error.response.data && error.response.data.errors) {
+                    this.errors = error.response.data.errors;
+                } else {
+                    console.error('erro desconhecido:', error);
+                }
             }
         }
     }
@@ -74,8 +102,40 @@ export default {
     justify-content: center;
     height: 100vh;
     align-items: center;
-    background-color: #333;
+    background: rgb(195,188,191);
+    background: radial-gradient(circle, rgba(195,188,191,1) 0%, rgba(107,154,237,1) 100%);
     
+}
+.error {
+    min-height: 30px;
+    display: block;
+    justify-content: flex-start;
+    align-items: center;
+    position: relative;
+    margin-left: 10px;
+    color: transparent;
+    p {
+        margin-top: 0px;
+        font-size: 13px;
+        color: red;
+    }
+}
+.input-box {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 3px;
+
+}
+
+.base-input {
+    width: 480px;
+    height: 65px;
+    margin-bottom: 7px; 
+    border-radius: 4px;
+    border: 0.9px solid rgba(61, 61, 61, 0.384);
+    border-color: none;
+    text-indent: 20px;
+    font-size: 22px ;
 }
 
 .register-container {
@@ -83,11 +143,11 @@ export default {
     justify-content: center;
     flex-direction: column;
     align-items: center;
-    background-color: rgb(216, 31, 31);
+    background-color: rgb(255, 255, 255);
     width: 580px;
-    height: 590px;
+    height: 700px;
     box-shadow: 0 4px 8px 2px rgba(26, 25, 25, 0.274);
-    border-radius: 2.5px;
+    border-radius: 29px;
 }
 
 
@@ -100,16 +160,7 @@ form {
     margin-top: 40px;
 }
 
-.base-input {
-    width: 480px;
-    height: 65px;
-    margin-bottom: 45px; 
-    border-radius: 4px;
-    border: 0.9px solid rgba(61, 61, 61, 0.384);
-    border-color: none;
-    text-indent: 20px;
-    font-size: 22px ;
-}
+
 
 input::placeholder {
     color: rgba(56, 55, 55, 0.788);
@@ -126,8 +177,8 @@ input::placeholder {
 }
 
 p {
-    font-size: 16px;
-    color: rgb(56, 56, 56);
+    font-size: 20px;
+    color: rgb(0, 0, 0);
     margin-top: 20px;
     text-align: center;
 }
@@ -146,29 +197,36 @@ a:hover {
     background-color: transparent;
 }
 
-@media (max-width: 650px) {
-    .login-container {
-        width: 60%;
+@media (max-width: 1040px) {
+    .register-container {
+        
+        height: 88%;
+        width: 90%;
         max-width: 100%;
         margin-top: 0;
         padding: 10px;
+        overflow-y: auto;
     }
-
-    input {
+    .input-box {
+        width: 100%;
+    }
+    .base-input {
         width: 100%;
         height: 50px;
         margin-bottom: 15px;
         font-size: 14px;
     }
-
-    button {
+    .base-button {
+        max-width: 100%;
+    }
+    .form-container {
         width: 100%;
-        height: 50px;
-        font-size: 16px;
     }
 
+    
+
     p {
-        font-size: 14px;
+        font-size: 16px;
         margin-top: 10px;
     }
 }

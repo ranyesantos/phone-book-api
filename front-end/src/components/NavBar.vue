@@ -2,11 +2,8 @@
     <header>
         <nav class="navbar">
             <div class="navbar-container">
-                <router-link to="/home" class="navbar-logo">Logo</router-link>
-                
-                <!-- <button class="navbar-toggle" @click="toggleMenu">
-                    ☰
-                </button> -->
+                <router-link to="/home" class="navbar-logo"><i class="fa-solid fa-book">                   
+                </i></router-link>
             </div>
         </nav>
     </header>
@@ -15,16 +12,11 @@
 <script>
     export default {
         name: 'Navbar',
-        data() {
-            return {
-                isMenuActive: false
-            };
-        },
-        // methods: {
-        //   toggleMenu() {
-        //     this.isMenuActive = !this.isMenuActive;
-        //   }
-        // }
+        methods: {
+          toggleMenu() {
+            this.isMenuActive = !this.isMenuActive;
+          }
+        }
     }
 </script>
 
@@ -39,28 +31,33 @@ header {
 }
 
 .navbar {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 60px; /* Defina uma altura fixa */
-    z-index: 1000; /* Garante que a navbar fique acima dos outros elementos */
-    background-color: #333;
+    height: 60px;
+    z-index: 1000;
+    background: radial-gradient(circle, rgba(195,188,191,1) 0%, rgba(107,154,237,1) 0%);
 }
 
 .navbar-container {
     display: flex;
+    position: fixed;
     align-items: center;
     width: 100%;
     max-width: 1200px;
-    margin: 0 auto;
 }
 
 .navbar-logo {
     color: white;
-    font-size: 24px;
+    font-size: 32px;
     text-decoration: none;
     font-weight: bold;
+    padding-top: 20px;
+    padding-left: 40px;
+}
+.navbar-logo:hover {
+    background-color: transparent
 }
 
 .navbar-menu {
@@ -82,34 +79,12 @@ header {
     border-radius: 4px;
 }
 
-.navbar-toggle {
-    display: none;
-    background: none;
-    border: none;
-    color: white;
-    font-size: 24px;
-}
 
 
-@media (max-width: 768px) {
-    .navbar-menu {
+
+@media (max-width: 1040px) {
+    .navbar{
         display: none;
-        flex-direction: column;
-        width: 100%;
-    }
-
-    .navbar-menu.active {
-        display: flex;
-    }
-
-    .navbar-item {
-        padding: 10px;
-        text-align: center;
-        border-top: 1px solid #444;
-    }
-
-    .navbar-toggle {
-        display: block;
     }
 }
 </style>
