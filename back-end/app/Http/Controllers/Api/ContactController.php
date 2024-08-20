@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ContactRequest;
 use App\Models\Contact;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 
 class ContactController extends Controller
 {
@@ -55,16 +57,21 @@ class ContactController extends Controller
     public function update(ContactRequest $request, Contact $contact): JsonResponse
     {
 
-        $contact->update([
-            'name' => $request->name,
-            'phone'=> $request->phone,
-            'email'=> $request->email
-        ]);
-
         if ($request->hasFile('profile_picture')) {
-            $imagePath = $request->file('profile_picture')->store('profile_pictures', 'public');
-            $contact->profile_picture = $imagePath;
+
+            $file = $request->file('profile_picture');
+            $filePath = $file->store('profile_pictures', 'public');
+
+        } else {
+            $filePath = $contact->profile_picture;
         }
+
+        $contact->update([
+            'name' => $request->input('name'),
+            'phone'=> $request->input('phone'),
+            'email'=> $request->input('email'),
+            'profile_picture' => $filePath
+        ]);
 
         return response()->json([
             'contact' => $contact

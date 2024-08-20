@@ -14,6 +14,6 @@ Route::controller(ContactController::class)->middleware("auth:sanctum")->group(f
     Route::get('/contacts', 'index'); //method: GET, URL example:api/contacts
     Route::get('/contacts/{contact}', 'show'); //method: GET, URL example: api/contacts/3
     Route::post('/contacts', 'store'); //method: POST, URL example: api/contacts/
-    Route::put('/contacts/{contact}', 'update'); //method: PUT, URL example: api/contacts/3
+    Route::post('/contacts/{contact}', 'update'); //method: PUT, URL example: api/contacts/3(não está processando foto com método put)
     Route::delete('/contacts/{contact}', 'destroy'); //method: DELETE, URL example: api/contacts/3
 });
