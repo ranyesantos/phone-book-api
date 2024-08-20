@@ -56,12 +56,12 @@ export default {
     },
 
     mounted() {
-    if (!sessionStorage.getItem('pageReloaded')) {
-        sessionStorage.setItem('pageReloaded', 'true');
-        window.location.reload();
-    } else {
-        sessionStorage.removeItem('pageReloaded');
-    }
+        if (!sessionStorage.getItem('pageReloaded')) {
+            sessionStorage.setItem('pageReloaded', 'true');
+            window.location.reload();
+        } else {
+            sessionStorage.removeItem('pageReloaded');
+        }
     },
 
     methods: {
@@ -71,15 +71,14 @@ export default {
         
         async register() {
             try {
-                const response = await api.post('/register', {
+                
+                await api.post('/register', {
                     name: this.name,    
                     email: this.email,
                     password: this.password
                     
                 });
 
-                this.token = response.data.token;
-                localStorage.setItem('authToken', this.token);
                 this.$router.push('/');
 
             } catch (error) {

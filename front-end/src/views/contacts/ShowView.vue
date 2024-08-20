@@ -65,13 +65,13 @@
 
         data() {
             return {
-                contact: null, 
+                contact: null,
                 defaultImage
             };
         },
         computed: {
             imageUrl() {
-            return this.contact?.profile_picture 
+                return this.contact?.profile_picture 
                 ? `${api.defaults.imgURL}/${this.contact.profile_picture}` 
                 : this.defaultImage;
             }
@@ -84,15 +84,10 @@
         methods: {
             
             async deleteBtn() {
-                const token = localStorage.getItem('authToken');
                 const id = this.$route.params.id; 
                 
                 try {
-                    const response = await api.delete(`/contacts/${id}`, {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    });
+                    const response = await api.delete(`/contacts/${id}`);
                     const statusCode = response.status;
                     if (statusCode == 200){
                         this.$router.push('/home');
@@ -107,15 +102,10 @@
             },
             
             async fetchContact() {
-                const token = localStorage.getItem('authToken');
                 const id = this.$route.params.id; 
                 
                 try {
-                    const response = await api.get(`/contacts/${id}`, {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    });
+                    const response = await api.get(`/contacts/${id}`);
                     this.contact = response.data.contact
                     console.log('Contact details:', this.contact); 
                     
@@ -125,14 +115,15 @@
                 }
             },
             formatPhoneNumber(phone) {
-            phone = phone.toString();
-            
-            if (phone.length === 11) {
-                return phone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-                } else if (phone.length === 10) {
-                return phone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
-                } else {
-                return phone;
+                phone = phone.toString();
+                
+                if (phone.length === 11) {
+                    return phone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+                    } else if (phone.length === 10) {
+                        return phone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+                    } else {
+                    return phone;
+                        
                 }
             },
         }

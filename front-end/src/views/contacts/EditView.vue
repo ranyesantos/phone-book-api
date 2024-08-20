@@ -10,6 +10,7 @@
             <form @submit.prevent="add" class="form-box">
 
                 <div class="profile-picture">
+
                     <div class="image-container">
                         <img :src="imageUrl || defaultImage" alt="Profile Picture" class="profile-img" />
                         <input type="file" @change="handleImageUpload" accept="image/*" class="file-input" />
@@ -50,7 +51,7 @@
                         
                         <div class="inp">
                             <i class="fa-solid fa-envelope"></i>
-                            <input type="email" placeholder="E-mail" v-model="contact.email" class="base-input"/>
+                            <input type="text" placeholder="E-mail" v-model="contact.email" class="base-input"/>
                         </div>    
                         <div class="error">
                             <p v-if="errors.email" class="error-message">{{ errors.email }}</p>
@@ -96,8 +97,6 @@
                     name: '',
                     phone: '',
                     email: null,
-                    profile_picture: '',
-                    
                 }, 
                 errors: {
                     "name": '',
@@ -106,6 +105,7 @@
                     "profile_picture": ''
                 },
                 imageUrl: null,
+                file: null,
             };
 
     
@@ -113,8 +113,8 @@
         computed: {
             imageUrl() {
                 return this.contact?.profile_picture 
-                    ? `${api.defaults.imgURL}/${this.contact.profile_picture}` 
-                    : defaultImage;
+                ? `${api.defaults.imgURL}/${this.contact.profile_picture}` 
+                : defaultImage;
             }
         },
 
@@ -123,39 +123,52 @@
         },
 
         methods: {
+            handleImageUpload(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    this.file = file;
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        this.imageUrl = e.target.result;
+                        console.log("caminho", this.imageUrl)
+                    };
+                    console.log("arquivo", this,file)
+                    reader.readAsDataURL(file);
+                } else {
+                    this.imageUrl = ''; 
+                }
+            },
             async fetchContact() {
-                const token = localStorage.getItem('authToken');
                 const id = this.$route.params.id; 
                     
                 try {
-                    const response = await api.get(`/contacts/${id}`, {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    });
+                    const response = await api.get(`/contacts/${id}`, );
 
                     this.contact = response.data.contact
                 
                 } catch (error) {
                     console.error('Error fetching contact:', error);
+                    this.$router.push('/home');
                 }
             },
-
-            
             
             async add() {
                 const formData = new FormData();
                 formData.append('name', this.contact.name);
                 formData.append('phone', this.contact.phone);
                 formData.append('email', this.contact.email);
-            
-            
+
+                if (this.file) {
+                    formData.append('profile_picture', this.file);
+                }
+                // for (let [key, value] of formData.entries()) {
+                //     console.log(key, value);
+                // }
                 try {
-                    const token = localStorage.getItem('authToken');
                     const id = this.contact.id; 
-                    await api.put(`/contacts/${id}`, formData, {
+                    await api.post(`/contacts/${id}`, formData, {
                         headers: {
-                            Authorization: `Bearer ${token}`
+                            'Content-Type': 'multipart/form-data',
                         }
                     });
                     

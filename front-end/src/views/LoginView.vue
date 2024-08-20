@@ -42,11 +42,11 @@ export default {
     },
     mounted() {
         if (!sessionStorage.getItem('pageReloaded')) {
-        sessionStorage.setItem('pageReloaded', 'true');
-        
-        window.location.reload();
+            sessionStorage.setItem('pageReloaded', 'true');
+            
+            window.location.reload();
         } else {
-        sessionStorage.removeItem('pageReloaded');
+            sessionStorage.removeItem('pageReloaded');
         }
     },
     
@@ -59,6 +59,7 @@ export default {
 
         async login() {
             try {
+                
                 const response = await api.post('/login', {
                     email: this.email,
                     password: this.password,
@@ -70,9 +71,7 @@ export default {
                     localStorage.setItem('authToken', token);
                     this.$router.push({ name: 'home' });
 
-                } else {
-                    console.log('Credenciais Incorretas')
-                }
+                } 
 
             } catch (error) {
                 if (error.response && error.response.data && error.response.data.message) {

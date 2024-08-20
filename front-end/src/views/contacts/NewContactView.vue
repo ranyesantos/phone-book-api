@@ -94,23 +94,21 @@
             };
         },
         methods: {
-            cleanErrorMessages(messages) {
-                if (!messages) return messages;
-                return messages.map(message => message.replace(/[^a-zA-Z0-9\s]/g, ''));
-            },
+
             handleImageUpload(event) {
                 const file = event.target.files[0];
                 if (file) {
                     this.file = file;
                     const reader = new FileReader();
+                    reader.readAsDataURL(file);
                     reader.onload = (e) => {
                         this.imageUrl = e.target.result;
                     };
-                    reader.readAsDataURL(file);
                 } else {
                     this.imageUrl = ''; 
                 }
             },
+
             async add() {
                 const formData = new FormData();
                 formData.append('name', this.name);
@@ -121,13 +119,15 @@
                     formData.append('profile_picture', this.file);
                     // this.$emit('file-selected', this.file);
                 }
-                
+                // for (let [key, value] of formData.entries()) {
+                //     console.log(key, value);
+                // }
                 try {
                     const token = localStorage.getItem('authToken');
                     await api.post('/contacts', formData, {
                         headers: {
+                            
                             'Content-Type': 'multipart/form-data',
-                            Authorization: `Bearer ${token}`
                         }
                     });
                     

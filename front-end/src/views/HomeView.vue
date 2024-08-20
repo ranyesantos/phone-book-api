@@ -17,13 +17,13 @@ import AddButton from '../components/AddButton.vue';
 import api from '../services/apiService';
 
 export default {
-  props: ['id'],
   components: {
     
     Navbar,
     SideBar,
     ListingComponent,
     AddButton
+
   },
 
   data() {
@@ -41,16 +41,11 @@ export default {
   methods: {
     async fetchContacts() {
       try {
-        const token = localStorage.getItem('authToken'); 
-        const response = await api.get('/contacts', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
+        const response = await api.get('/contacts');
         this.contacts = response.data.contacts;
+
       } catch (error) {
         console.error('erro ao buscar contatos:', error);
-        return;
       }
     },
 
