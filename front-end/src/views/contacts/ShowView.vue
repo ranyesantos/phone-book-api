@@ -1,7 +1,5 @@
 <template>
-<Navbar />
 <div class="master">
-    <SideBar />
     <section class="content">
         <div v-if="contact" class="contact-container" >
             <div class="contact-header">
@@ -50,16 +48,12 @@
 </template>
 
 <script>
-    import Navbar from '../../components/NavBar.vue';
-    import SideBar from '../../components/SideBar.vue';
     import ContactNavbar from '../../components/ContactNavbar.vue';
     import defaultImage from '../../assets/img/user.png';
     import api from '../../services/apiService';
 
     export default {
         components: {
-            Navbar,
-            SideBar,
             ContactNavbar,
         },
 

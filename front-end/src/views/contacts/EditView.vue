@@ -1,7 +1,5 @@
 <template>
-<Navbar />
 <div class="master">
-    <SideBar />
     <section class="content">
         <div class="form-container">
 
@@ -75,8 +73,6 @@
 
 <script>
 
-    import Navbar from '../../components/NavBar.vue';
-    import SideBar from '../../components/SideBar.vue';
     import BaseButton from '../../components/BaseButton.vue';
     import ContactNavbar from '../../components/ContactNavbar.vue';
     import api from '../../services/apiService';
@@ -85,8 +81,6 @@
 
     export default {
         components: {
-            Navbar,
-            SideBar,
             BaseButton,
             ContactNavbar,
         },

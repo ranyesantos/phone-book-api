@@ -1,5 +1,4 @@
 <template>
-  <Navbar />
   <div class="main">
     <SideBar class="sidebar"/>
     <section class="content">
@@ -11,16 +10,12 @@
 
 <script>
 import ListingComponent from '../components/ListingComponent.vue';
-import Navbar from '../components/NavBar.vue';
-import SideBar from '../components/SideBar.vue';
 import AddButton from '../components/AddButton.vue';
 import api from '../services/apiService';
 
 export default {
   components: {
     
-    Navbar,
-    SideBar,
     ListingComponent,
     AddButton
 

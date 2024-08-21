@@ -114,6 +114,7 @@ export default {
 
 .login-box {
     display: flex;
+    justify-content: center;
     flex-direction: column;
 }
 
@@ -121,6 +122,7 @@ export default {
     display: flex;
     flex-direction: column;
     margin-bottom: 3px;
+    
 }
 .base-input {
     width: 480px;
@@ -131,7 +133,7 @@ export default {
     border-color: none;
     text-indent: 20px;
     font-size: 22px;
-    max-width: 480px;
+    
 }
 /* .error {
     color: red;
