@@ -15,4 +15,3 @@
 2. **"cp .env.example .env" (Edite o arquivo .env com suas configurações)**
 3. **"npm run dev"**
 
-**obs: algo que esqueci de comentar é sobre a navbar e a sidebar serem importadas em todas as views. Descobri de "ultima hora" que esses componentes estavam sendo "mostrados" nas views de registro e login mesmo que a importação delas não fossem feitas. Mas reconheço que seria melhor usar um layout separado para essas views.** 
