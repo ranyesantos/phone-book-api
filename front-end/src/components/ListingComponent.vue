@@ -232,6 +232,7 @@ th {
   text-align: center;
   padding-left: 0px;
   padding-right: 30px;
+  min-width:30px;
 } 
 
 tbody tr:hover {
