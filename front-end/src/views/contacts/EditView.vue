@@ -35,7 +35,7 @@
                     <div class="input-box">
                         <div class="inp">
                             <i class="fa-solid fa-phone"></i>
-                            <input type="text" placeholder="Telefone"  v-model="contact.phone" class="base-input"/>
+                            <input type="text" placeholder="Telefone" v-model="contact.phone" class="base-input"/>
                             
                         </div>
                         <div class="error">
@@ -49,7 +49,7 @@
                         
                         <div class="inp">
                             <i class="fa-solid fa-envelope"></i>
-                            <input type="text" placeholder="E-mail" v-model="contact.email" class="base-input"/>
+                            <input type="email" placeholder="E-mail" v-model="contact.email" class="base-input"/>
                         </div>    
                         <div class="error">
                             <p v-if="errors.email" class="error-message">{{ errors.email }}</p>
@@ -90,7 +90,7 @@
                     id: '',
                     name: '',
                     phone: '',
-                    email: null,
+                    email: '',
                 }, 
                 errors: {
                     "name": '',
@@ -147,6 +147,10 @@
             },
             
             async add() {
+                if (this.contact.email === "null"|| this.contact.email === null){
+                    this.contact.email = '';
+                }   
+            
                 const formData = new FormData();
                 formData.append('name', this.contact.name);
                 formData.append('phone', this.contact.phone);
@@ -155,9 +159,6 @@
                 if (this.file) {
                     formData.append('profile_picture', this.file);
                 }
-                // for (let [key, value] of formData.entries()) {
-                //     console.log(key, value);
-                // }
                 try {
                     const id = this.contact.id; 
                     await api.post(`/contacts/${id}`, formData, {
@@ -168,11 +169,9 @@
                     
                     this.$router.push('/home');
                 } catch (error) {
-                    if (error.response && error.response.data && error.response.data.errors) {
+                    if (error.response.data.errors) {
                         this.errors = error.response.data.errors;
-                    } else {
-                        console.error('erro desconhecido:', error);
-                    }
+                    } 
                 }
             },
             

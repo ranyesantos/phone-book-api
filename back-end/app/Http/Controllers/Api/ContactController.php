@@ -57,13 +57,11 @@ class ContactController extends Controller
     public function update(ContactRequest $request, Contact $contact): JsonResponse
     {
 
+        $filePath = $contact->profile_picture;
         if ($request->hasFile('profile_picture')) {
-
             $file = $request->file('profile_picture');
             $filePath = $file->store('profile_pictures', 'public');
 
-        } else {
-            $filePath = $contact->profile_picture;
         }
 
         $contact->update([
