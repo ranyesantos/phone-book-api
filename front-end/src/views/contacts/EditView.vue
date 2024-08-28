@@ -13,7 +13,6 @@
 
                         <img :src="imageUrl ||imageUrlExistent || defaultImage" alt="Profile Picture" class="profile-img" />
                         <input type="file" @change="handleImageUpload" :key="resetFileKey" accept="image/*" class="file-input" />
-                         <p v-if="errors.profile_picture" class="error-message">{{ errors.profile_picture }}</p>
                     </div>
 
                     <div class="pic-actions">
@@ -30,9 +29,6 @@
                             <input type="text" placeholder="Nome"  v-model="contact.name" class="base-input"/>
                         </div>
 
-                        <div class="error">
-                            <p v-if="errors.name" class="error-message">{{ errors.name }}</p>
-                        </div>
                     </div>
 
                     
@@ -43,9 +39,6 @@
                             <input type="text" placeholder="Telefone" v-model="contact.phone" class="base-input"/>
                             
                         </div>
-                        <div class="error">
-                            <p v-if="errors.phone" class="error-message">{{ errors.phone }}</p>
-                        </div>
 
                     </div>
                     
@@ -55,19 +48,26 @@
                         <div class="inp">
                             <i class="fa-solid fa-envelope"></i>
                             <input type="email" placeholder="E-mail" v-model="contact.email" class="base-input"/>
-                        </div>    
-                        <div class="error">
-                            <p v-if="errors.email" class="error-message">{{ errors.email }}</p>
-                        </div>
+                        </div> 
 
                     </div>
 
                     
                 </div>
-                <div class="btn-box">
+                <div class="form-footer">
     
-                    <BaseButton class="base-button" type="submit">Salvar</BaseButton>
-    
+                    <div class="btn-box">
+                        <BaseButton class="base-button" type="submit">Salvar</BaseButton>
+                    </div>
+
+                    <div class="errors-mobile">
+                        <div v-if="errors.length" class="error-messages">
+                            <ul>
+                                <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
+                            </ul>
+                        </div>
+                    </div>
+
                 </div>
 
             </form>
@@ -97,12 +97,7 @@
                     phone: '',
                     email: '',
                 }, 
-                errors: {
-                    "name": '',
-                    "phone": '',
-                    "email": '',
-                    "profile_picture": ''
-                },
+                errors: [],
                 imageUrl: null,
                 file: null,
                 defaultImage,
@@ -193,7 +188,7 @@
                     this.$router.push('/home');
                 } catch (error) {
                     if (error.response.data.errors) {
-                        this.errors = error.response.data.errors;
+                        this.errors = Object.values(error.response.data.errors).flat();
                     } 
                 }
             },
@@ -209,15 +204,18 @@
 .input-box {
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
     font-size: 30px;
-    margin-bottom: 0px;
+    margin-bottom: 20px;
     margin-top: 20px;
-    flex-direction: column;
-    margin-bottom: 3px;
-    
 }
 
+.input-box i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+}
 
 .inp {
     display: flex;
@@ -228,19 +226,7 @@
         margin-right: 20px;
     }
 }
-.error {
-    min-height: 30px;
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    margin-left: 10px;
-    color: transparent;
-    p {
-        margin-top: 0px;
-        font-size: 16px;
-        color: red;
-    }
-}
+
 .master {
     display: flex;
     flex: 1;
@@ -355,8 +341,6 @@ p {
     }
 }
 
-
-
 .base-input {
     width: 70vh;
     height: 45px;
@@ -381,14 +365,6 @@ input::placeholder {
     font-size: 24px;
 }
 
-.error {
-    position: relative;
-    margin-left: 10px;
-    p {
-        color: red;
-    }
-}
-
 form {
     display: flex;
     flex-direction: column;
@@ -397,12 +373,44 @@ form {
     margin-top: 20px;
 }
 
+.form-footer {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.btn-box {
+    display: flex;
+    height: 100%;
+    justify-content: flex-end;
+    align-items: flex-start;
+    margin-left: 10px;
+    margin-right: 80px;
+}
+
+.errors-mobile {
+    margin-left: 50px;
+    min-width: 215px;
+    display: inline-block;
+}
+
+li {
+    color: red;
+    font-size: 18px;
+}
+
 @media screen and (max-width: 1040px) {
     .master {
         width: 100%;
         margin-top: 0;
     }
 
+    li {
+        color: red;
+        font-size: 14px;
+    }
     .content {
         width: 100%;
         margin: 0;
@@ -448,12 +456,28 @@ form {
         max-width: 100%;
     }
 
+    .form-footer {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row-reverse;
+        align-items: center;
+        box-sizing: border-box;
+        width: 100%;
+    }
+
     .btn-box {
         display: flex;
+        height: 100%;
         justify-content: flex-end;
-        align-items: flex-end;
-        width: 90%;
-        
+        align-items: flex-start;
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+
+    .errors-mobile {
+        margin-left: 20px;
+        min-width: 215px;
+        display: inline-block;
     }
 
     .file-input {

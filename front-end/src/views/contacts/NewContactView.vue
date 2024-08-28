@@ -11,7 +11,7 @@
 
                     <div class="image-container">
 
-                        <img :src="imageUrl || defaultImage" alt="Profile Picture" class="profile-img" />
+                        <img :src="imageUrl || defaultImage" alt="Profile picture" class="profile-img" />
                         <input type="file" @change="handleImageUpload" :key="resetFileKey" accept="image/*" class="file-input" />
 
                     </div>
@@ -29,32 +29,33 @@
                         <input type="text" placeholder="Nome" v-model="name" class="base-input"/>
                     </div>
 
-                    <div class="error">
-                        <p v-if="errors.name" class="error-message">{{ errors.name }}</p>
-                    </div>
-
                     <div class="input-box">
                         <i class="fa-solid fa-phone"></i>
                         <input type="text"  placeholder="Telefone" v-model="phone" class="base-input"/>
                     </div>
 
-                    <div class="error">
-                        <p v-if="errors.phone" class="error-message">{{ errors.phone }}</p>
-                    </div>
-
                     <div class="input-box">
                         <i class="fa-solid fa-envelope"></i>
-                        <input type="email" placeholder="E-mail" v-model="email" class="base-input"/>
-                    </div>
-                    <div class="error">
-                        <p v-if="errors.email" class="error-message">{{ errors.email }}</p>
+                        <input type="text" placeholder="E-mail" v-model="email" class="base-input"/>
                     </div>
 
                 </div>
 
-                <div class="btn-box">
-                    <BaseButton class="base-button" type="submit">Salvar</BaseButton>
+                <div class="form-footer">
+    
+                    <div class="btn-box">
+                        <BaseButton class="base-button" type="submit">Salvar</BaseButton>
+                    </div>
+    
+                    <div class="errors-mobile">
+                        <div v-if="errors.length" class="error-messages">
+                            <ul>
+                                <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
+
             </form>
         </div>
     </section>
@@ -84,12 +85,7 @@
                 defaultImage,
                 removePfp: false,
                 resetFileKey: Date.now(),
-                errors: {
-                    "name": '',
-                    "phone": '',
-                    "email": '',
-                    "profile_picture": ''
-                }
+                errors: []
             };
         },
         methods: {
@@ -139,7 +135,7 @@
                     
                 } catch (error) {
                     if (error.response && error.response.data && error.response.data.errors) {
-                        this.errors = error.response.data.errors;
+                        this.errors = Object.values(error.response.data.errors).flat();
                     } else {
                         console.error('erro desconhecido:', error);
                     }
@@ -161,12 +157,27 @@
     overflow: 1;
 }
 
-.error {
-    display: block;
-    p {
+.form-footer {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+    box-sizing: border-box;
+}
 
-        color: red;
-    }
+.btn-box {
+    display: flex;
+    height: 100%;
+    justify-content: flex-end;
+    align-items: flex-start;
+    margin-left: 10px;
+    margin-right: 80px;
+}
+
+.errors-mobile {
+    margin-left: 50px;
+    min-width: 215px;
+    display: inline-block;
 }
 
 .content {  
@@ -231,8 +242,7 @@
 .profile-img {
     width: 150px; 
     height: 150px;
-    border-radius: 50%; 
-    object-fit: cover;
+    border-radius: 50%;
     border: 2px solid #ddd;
 }
 
@@ -240,16 +250,12 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 150px; 
+    height: 150px;
     opacity: 0; 
     cursor: pointer; 
 }
 
-p {
-    margin-top: 0px;
-    color: #888; 
-}
 
 .navbar {
     display: flex;
@@ -322,19 +328,38 @@ form {
     margin-top: 20px;
 }
 
+li {
+    color: red;
+    font-size: 18px;
+}
+
+p {
+    margin-top: 0px;
+    color: #888; 
+}
+
 @media screen and (max-width: 1040px) {
+    
+    li {
+        color: red;
+        font-size: 14px;
+    }
+    
     .master {
         width: 100%;
         margin-top: 0;
     }
+    
     .content {
         max-width: 100%;
         margin: 0;
         border-radius: 0;
     }
+    
     .form-container {
         padding: 0;
     }
+    
     .input-box {
         max-width: 100%;
         i {
@@ -344,16 +369,33 @@ form {
     .base-button {
         font-size: 20px;
     }
+    
+    .form-footer {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row-reverse;
+        align-items: center;
+        box-sizing: border-box;
+        width: 100%;
+    }
+
     .btn-box {
         display: flex;
+        height: 100%;
         justify-content: flex-end;
-        align-items: flex-end;
-        width: 90%;
-        
+        align-items: flex-start;
+        margin-left: 10px;
+        margin-right: 10px;
     }
+
+    .errors-mobile {
+        margin-left: 20px;
+        min-width: 215px;
+        display: inline-block;
+    }
+
     .base-input {
         width: 95%;
-        
         max-width: 100%;
     }
 
@@ -363,10 +405,18 @@ form {
     }
 
     .form-box {
+        margin-top: 0;
         display: flex;
         align-items: center;
         max-width: 100%;
+        height: 100%;
+        overflow-x: hidden;
     }
+
+    li {
+        color: red;
+    }
+
     i {
         display: none;
     }
