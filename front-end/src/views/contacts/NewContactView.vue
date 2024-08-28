@@ -8,13 +8,17 @@
             <form @submit.prevent="add" class="form-box">
 
                 <div class="profile-picture">
-                    <div class="image-container">
-                        <img :src="imageUrl || defaultImage" alt="Profile Picture" class="profile-img" />
 
-                        <input type="file" @change="handleImageUpload" accept="image/*" class="file-input" />
-                        <p v-if="errors.profile_picture" class="error-message">{{ errors.profile_picture }}</p>
+                    <div class="image-container">
+
+                        <img :src="imageUrl || defaultImage" alt="Profile Picture" class="profile-img" />
+                        <input type="file" @change="handleImageUpload" :key="resetFileKey" accept="image/*" class="file-input" />
+
                     </div>
-                    
+
+                    <div class="pic-actions">
+                        <button v-if="imageUrl" @click="removeImage" class="remove-pic-btn"><i class="fa-solid fa-minus"></i></button>
+                    </div>
 
                 </div>
 
@@ -64,7 +68,6 @@
     import api from '../../services/apiService';
     import defaultImage from '../../assets/img/user.png';
 
-    /////FNCIANDNDO
 
     export default {
         components: {
@@ -78,7 +81,9 @@
                 email: '',
                 imageUrl: null,
                 file: null,
-                defaultImage ,
+                defaultImage,
+                removePfp: false,
+                resetFileKey: Date.now(),
                 errors: {
                     "name": '',
                     "phone": '',
@@ -93,6 +98,7 @@
                 const file = event.target.files[0];
                 if (file) {
                     this.file = file;
+                    this.removePfp = false; 
                     const reader = new FileReader();
                     reader.readAsDataURL(file);
                     reader.onload = (e) => {
@@ -101,6 +107,15 @@
                 } else {
                     this.imageUrl = ''; 
                 }
+            },
+            
+            removeImage() {
+                
+                this.removePfp = true; 
+                this.imageUrl = ''; 
+                this.file = '';
+                this.resetFileKey = Date.now();
+                
             },
 
             async add() {
@@ -111,13 +126,8 @@
                 
                 if (this.file) {
                     formData.append('profile_picture', this.file);
-                    // this.$emit('file-selected', this.file);
                 }
-                // for (let [key, value] of formData.entries()) {
-                //     console.log(key, value);
-                // }
                 try {
-                    const token = localStorage.getItem('authToken');
                     await api.post('/contacts', formData, {
                         headers: {
                             
@@ -183,11 +193,34 @@
     padding-left: 80px;
 }
 
-
 .profile-picture {
+    position:relative;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
+    max-height: 160px;
+    min-height: 160px;
+}
+
+.pic-actions {
+    position: absolute;
+    top: 104px;
+    left: 115px;
+}
+
+.remove-pic-btn {
+    background-color: red;
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    i {
+        font-size: 30px;
+    }
 }
 
 .image-container {

@@ -69,6 +69,12 @@ class ContactController extends Controller
 
         }
 
+        if ($request->profile_picture == '') {
+            if ($filePath && Storage::disk('public')->exists($filePath)) {
+                Storage::disk('public')->delete($filePath);
+            }
+            $filePath = null;
+        }
 
         $contact->update([
             'name' => $request->input('name'),

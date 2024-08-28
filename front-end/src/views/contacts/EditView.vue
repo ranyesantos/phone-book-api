@@ -10,10 +10,15 @@
                 <div class="profile-picture">
 
                     <div class="image-container">
-                        <img :src="imageUrl || defaultImage" alt="Profile Picture" class="profile-img" />
-                        <input type="file" @change="handleImageUpload" accept="image/*" class="file-input" />
+
+                        <img :src="imageUrl ||imageUrlExistent || defaultImage" alt="Profile Picture" class="profile-img" />
+                        <input type="file" @change="handleImageUpload" :key="resetFileKey" accept="image/*" class="file-input" />
+                         <p v-if="errors.profile_picture" class="error-message">{{ errors.profile_picture }}</p>
                     </div>
-                    <p v-if="!imageUrl">Escolha uma imagem (max:2048KB)</p>
+
+                    <div class="pic-actions">
+                        <button v-if="imageUrl || imageUrlExistent" @click="removeImage" class="remove-pic-btn"><i class="fa-solid fa-minus"></i></button>
+                    </div>
 
                 </div>
 
@@ -100,15 +105,18 @@
                 },
                 imageUrl: null,
                 file: null,
+                defaultImage,
+                removePfp: false,
+                resetFileKey: Date.now()
             };
 
     
         },
         computed: {
-            imageUrl() {
+            imageUrlExistent() {
                 return this.contact?.profile_picture 
                 ? `${api.defaults.imgURL}/${this.contact.profile_picture}` 
-                : defaultImage;
+                : false;
             }
         },
 
@@ -120,18 +128,28 @@
             handleImageUpload(event) {
                 const file = event.target.files[0];
                 if (file) {
+                    this.removePfp = false;
                     this.file = file;
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         this.imageUrl = e.target.result;
-                        console.log("caminho", this.imageUrl)
                     };
-                    console.log("arquivo", this,file)
                     reader.readAsDataURL(file);
                 } else {
                     this.imageUrl = ''; 
                 }
             },
+
+            async removeImage() {
+                
+                this.removePfp = true; 
+                this.contact.profile_picture = '';
+                this.imageUrl = ''; 
+                this.file = '';
+                this.resetFileKey = Date.now();
+                
+            },
+
             async fetchContact() {
                 const id = this.$route.params.id; 
                     
@@ -159,6 +177,11 @@
                 if (this.file) {
                     formData.append('profile_picture', this.file);
                 }
+                
+                if (this.removePfp) {
+                    formData.append('profile_picture', '');
+                }
+
                 try {
                     const id = this.contact.id; 
                     await api.post(`/contacts/${id}`, formData, {
@@ -194,6 +217,7 @@
     margin-bottom: 3px;
     
 }
+
 
 .inp {
     display: flex;
@@ -253,10 +277,33 @@
 
 
 .profile-picture {
+    position:relative;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    padding-bottom: 20px;
+    max-height: 160px;
+    min-height: 160px;
+}
+
+.pic-actions {
+    position: absolute;
+    top: 104px;
+    left: 115px;
+}
+
+.remove-pic-btn {
+    background-color: red;
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    i {
+        font-size: 30px;
+    }
 }
 
 .image-container {
