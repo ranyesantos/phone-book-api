@@ -6,8 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ContactRequest;
 use App\Models\Contact;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ContactController extends Controller
 {
@@ -58,11 +57,18 @@ class ContactController extends Controller
     {
 
         $filePath = $contact->profile_picture;
+
         if ($request->hasFile('profile_picture')) {
+
+            if ($filePath && Storage::disk('public')->exists($filePath)) {
+                Storage::disk('public')->delete($filePath);
+            }
+
             $file = $request->file('profile_picture');
             $filePath = $file->store('profile_pictures', 'public');
 
         }
+
 
         $contact->update([
             'name' => $request->input('name'),
