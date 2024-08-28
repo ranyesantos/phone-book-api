@@ -24,10 +24,14 @@
                                 <i class="fa-solid fa-pen"></i>
                             </a>
 
-                            <a @click="deleteBtn">
+                            <a  @click="showModal = true">
                                 <i class="fa-solid fa-trash"></i>
                             </a>
-
+                            <ModalDelete
+                                :show="showModal"
+                                @confirm="deleteBtn"
+                                @cancel="showModal = false"
+                            />
                         </div>
                     </div>
                     <div class="contact-info">
@@ -50,17 +54,21 @@
 <script>
     import ContactNavbar from '../../components/ContactNavbar.vue';
     import defaultImage from '../../assets/img/user.png';
+    import ModalDelete from '../../components/ModalDelete.vue';
     import api from '../../services/apiService';
 
     export default {
         components: {
             ContactNavbar,
+            ModalDelete
         },
 
         data() {
             return {
                 contact: null,
-                defaultImage
+                defaultImage,
+                showModal: false,
+                contactId: null,
             };
         },
         computed: {
