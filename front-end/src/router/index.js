@@ -27,12 +27,7 @@ const router = createRouter({
       name:MainLayout,
       component:MainLayout,
       children: [
-        {
-          path: '/bin',
-          name: 'bin',
-          component: () => import('../views/BinView.vue'),
-          meta: { requiresAuth: true }
-        },
+      
         {
           path: '/home',
           name: 'home',

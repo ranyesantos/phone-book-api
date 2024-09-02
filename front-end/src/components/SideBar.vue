@@ -2,7 +2,7 @@
     <aside class="sidebar">
         <ul class="sidebar-menu">
             <li><router-link to="/home" class="sidebar-item"><i class="fa-solid fa-user"></i>Contatos</router-link></li>
-            <li><router-link to="/bin" class="sidebar-item"><i class="fa-solid fa-trash"></i>Lixeira</router-link></li>
+            <!-- <li><router-link to="/bin" class="sidebar-item"><i class="fa-solid fa-trash"></i>Lixeira</router-link></li> -->
             <logoutButton class="logout-btn" />
         </ul>
         
@@ -15,7 +15,6 @@
         name: 'Sidebar',
         components: {
             logoutButton
-
         }
     }
 </script>
