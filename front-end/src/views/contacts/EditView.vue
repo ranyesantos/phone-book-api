@@ -82,7 +82,7 @@
     import ContactNavbar from '../../components/ContactNavbar.vue';
     import api from '../../services/apiService';
     import defaultImage from '../../assets/img/user.png';
-
+    import { useToastStore } from '../../stores/toast';
 
     export default {
         components: {
@@ -154,8 +154,17 @@
                     this.contact = response.data.contact
                 
                 } catch (error) {
-                    console.error('Error fetching contact:', error);
-                    this.$router.push('/home');
+                    if (error.response && error.response.data) {
+                      
+                      const errorMessage = error.response.data.message || error.response.data.errorMsg;
+                      
+                      const toastStore = useToastStore();
+                      toastStore.errorToast(errorMessage);
+                      
+                      this.$router.push('/home');
+                    } 
+                  
+                  this.$router.push('/home');
                 }
             },
             
@@ -174,19 +183,35 @@
                 }
                 
                 if (this.removePfp) {
-                    formData.append('profile_picture', '');
+                    formData.append('remove_pfp', true);
                 }
 
                 try {
+
                     const id = this.contact.id; 
-                    await api.post(`/contacts/${id}`, formData, {
+                    const response = await api.post(`/contacts/${id}`, formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data',
                         }
                     });
+
+                    const successMessage = response.data.message;
                     
+                    const toastStore = useToastStore();
+                    toastStore.successToast(successMessage);
+
                     this.$router.push('/home');
+
                 } catch (error) {
+                    
+                    if (error.response && error.response.data && error.response.data.errorMsg) {                    
+                        const errorMessage = error.response.data.errorMsg;
+                                        
+                        const toastStore = useToastStore();
+                        toastStore.errorToast(errorMessage);
+                        
+                    }
+
                     if (error.response.data.errors) {
                         this.errors = Object.values(error.response.data.errors).flat();
                     } 

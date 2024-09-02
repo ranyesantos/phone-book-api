@@ -6,48 +6,87 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ContactRequest;
 use App\Models\Contact;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Storage;
+use App\Services\ProfilePictureService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+
+use Exception;
 
 class ContactController extends Controller
 {
+    protected $profilePictureService;
+
+    public function __construct(ProfilePictureService $profilePictureService)
+    {
+        $this->profilePictureService = $profilePictureService;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index(): JsonResponse
     {
-        $contacts = Contact::orderBy('name', 'asc')->get();
-        return response()->json([
-            'contacts' => $contacts
-        ],200);
+        try {
+
+            $contacts = Contact::orderBy('name', 'asc')->get();
+            return response()->json([
+                'status' => true,
+                'contacts' => $contacts
+            ], 200);
+
+        } catch (Exception $e) {
+
+            return response()->json([
+                'error' => $e->getMessage(),
+                'errorMsg' => 'Erro ao recuperar contatos'
+            ], 500);
+
+        }
     }
 
     public function show(Contact $contact): JsonResponse
     {
-        return response()->json([
-            'contact' => $contact
-        ],200);
+        try {
+
+            return response()->json([
+                'status' => true,
+                'contact' => $contact
+            ], 200);
+
+        } catch (Exception $e) {
+
+            return response()->json([
+                'error' => $e->getMessage(),
+                'errorMsg' => 'Erro ao exibir contato'
+            ], 500);
+
+        }
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ContactRequest $request, Contact $contact): JsonResponse
+    public function store(ContactRequest $request): JsonResponse
     {
+        try {
 
-        $contact->name = $request->name;
-        $contact->phone = $request->phone;
-        $contact->email = $request->email;
+            $contact = Contact::create([
+                'name' => $request->name,
+                'phone' => $request->phone,
+                'email' => $request->email,
+                'profile_picture' => $this->profilePictureService->setProfilePicture($request)
+            ]);
 
-        if ($request->hasFile('profile_picture')) {
-            $imagePath = $request->file('profile_picture')->store('profile_pictures', 'public');
-            $contact->profile_picture = $imagePath;
+            return response()->json([
+                'contact' => $contact,
+                'message' => 'Contato Adicionado'
+            ], 201);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'errorMsg' => 'Erro ao criar contato'
+            ], 500);
         }
-
-        $contact->save();
-        return response()->json([
-            'contact' => $contact
-        ],201);
-
     }
 
     /**
@@ -55,38 +94,33 @@ class ContactController extends Controller
      */
     public function update(ContactRequest $request, Contact $contact): JsonResponse
     {
+        try {
 
-        $filePath = $contact->profile_picture;
+            $contact->update([
+                'name' => $request->input('name'),
+                'phone' => $request->input('phone'),
+                'email' => $request->input('email'),
+                'profile_picture' => $this->profilePictureService->updateProfilePicture($request, $contact)
+            ]);
 
-        if ($request->hasFile('profile_picture')) {
-
-            if ($filePath && Storage::disk('public')->exists($filePath)) {
-                Storage::disk('public')->delete($filePath);
+            if ($contact->wasChanged()) {
+                return response()->json([
+                    'message' => 'Contato atualizado com sucesso',
+                    'contact' => $contact
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => 'Nenhuma alteração foi feita no contato',
+                    'contact' => $contact
+                ], 200);
             }
 
-            $file = $request->file('profile_picture');
-            $filePath = $file->store('profile_pictures', 'public');
-
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage(),
+                'errorMsg' => 'Erro ao atualizar contato'
+            ], 500);
         }
-
-        if ($request->profile_picture == '') {
-            if ($filePath && Storage::disk('public')->exists($filePath)) {
-                Storage::disk('public')->delete($filePath);
-            }
-            $filePath = null;
-        }
-
-        $contact->update([
-            'name' => $request->input('name'),
-            'phone'=> $request->input('phone'),
-            'email'=> $request->input('email'),
-            'profile_picture' => $filePath
-        ]);
-
-        return response()->json([
-            'contact' => $contact
-        ],200);
-
     }
 
     /**
@@ -94,11 +128,22 @@ class ContactController extends Controller
      */
     public function destroy(Contact $contact): JsonResponse
     {
-        $contact->delete();
-
-        return response()->json([
-            'status' => true,
-            'message' => "apagado com sucesso",
-        ],200);
+        try {
+            $contact->delete();
+            return response()->json([
+                'status' => true,
+                'message' => 'Contato apagado com sucesso',
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'errorMsg' => 'Erro ao apagar contato'
+            ], 500);
+        }
     }
+
+    // public function indexTrashBin(Contact $contacts): JsonResponse
+    // {
+
+    // }
 }

@@ -3,7 +3,9 @@
     <SideBar class="sidebar"/>
     <section class="content">
       <ListingComponent text="Contatos" class="listingComp" :headers="headers" :contacts="contacts"/>
+      
       <AddButton redirectUrl="/new" />
+      
     </section>
   </div>
 </template>
@@ -12,38 +14,55 @@
 import ListingComponent from '../components/ListingComponent.vue';
 import AddButton from '../components/AddButton.vue';
 import api from '../services/apiService';
+import { useToastStore } from '../stores/toast';
+import { errorMessages } from 'vue/compiler-sfc';
 
 export default {
+
   components: {
     
     ListingComponent,
-    AddButton
+    AddButton,
 
   },
 
   data() {
     return {
       headers: ['Nome', 'Número de telefone', 'Email', ],
-      contacts: []
-      
+      contacts: [],
     };
+  },
+  
+  setup() {
+
+    const errorStore = useToastStore();
+    
+    return { errorStore };
   },
 
   mounted() {
+
     this.fetchContacts();
+
   },
 
   methods: {
     async fetchContacts() {
       try {
+        
         const response = await api.get('/contacts');
         this.contacts = response.data.contacts;
 
       } catch (error) {
-        console.error('erro ao buscar contatos:', error);
+        
+        const errorMessage = error.response.errorMsg;
+        
+        const toastStore = useToastStore();
+        toastStore.errorToast(errorMessage);
+        
       }
     },
-
+   
   }
 
 }
@@ -62,6 +81,16 @@ export default {
   overflow: hidden;
 }
 
+.toast-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 9999;
+}
+
+.toast {
+  margin: 0;
+}
 
 .content {
   margin-left: 220px;

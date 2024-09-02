@@ -68,7 +68,7 @@
     import ContactNavbar from '../../components/ContactNavbar.vue';
     import api from '../../services/apiService';
     import defaultImage from '../../assets/img/user.png';
-
+    import { useToastStore } from '../../stores/toast';
 
     export default {
         components: {
@@ -123,17 +123,34 @@
                 if (this.file) {
                     formData.append('profile_picture', this.file);
                 }
+                
                 try {
-                    await api.post('/contacts', formData, {
+
+                    const response = await api.post('/contacts', formData, {
                         headers: {
                             
                             'Content-Type': 'multipart/form-data',
                         }
                     });
+                  
+                    const successMessage = response.data.message;
                     
+                    const toastStore = useToastStore();
+                    toastStore.successToast(successMessage);
+
                     this.$router.push('/home');
                     
+                    
                 } catch (error) {
+                    
+                    if (error.response && error.response.data && error.response.data.errorMsg) {                    
+                        const errorMessage = error.response.data.errorMsg;
+                                        
+                        const toastStore = useToastStore();
+                        toastStore.errorToast(errorMessage);
+                        
+                    }
+                    
                     if (error.response && error.response.data && error.response.data.errors) {
                         this.errors = Object.values(error.response.data.errors).flat();
                     } else {

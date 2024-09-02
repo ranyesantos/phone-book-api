@@ -2,6 +2,7 @@
     <aside class="sidebar">
         <ul class="sidebar-menu">
             <li><router-link to="/home" class="sidebar-item"><i class="fa-solid fa-user"></i>Contatos</router-link></li>
+            <li><router-link to="/bin" class="sidebar-item"><i class="fa-solid fa-trash"></i>Lixeira</router-link></li>
             <logoutButton class="logout-btn" />
         </ul>
         
@@ -52,14 +53,14 @@
     font-size: 20px;
 }
 
-
-
 .sidebar-item {
     display: flex;
     align-items: center;
-    justify-content: start;
-    padding: 20px;
-    font-size: 17px;
+    justify-content: flex-start;
+    margin-left: 12px;
+    padding: 15px;
+    font-size: 22px;
+    margin-top: 20px;
     margin-bottom: 10px;
     color: white;
     text-decoration: none;

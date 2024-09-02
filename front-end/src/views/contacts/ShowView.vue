@@ -56,7 +56,9 @@
     import defaultImage from '../../assets/img/user.png';
     import ModalDelete from '../../components/ModalDelete.vue';
     import api from '../../services/apiService';
+    import { useToastStore } from '../../stores/toast';
 
+    
     export default {
         components: {
             ContactNavbar,
@@ -90,12 +92,25 @@
                 
                 try {
                     const response = await api.delete(`/contacts/${id}`);
-                    const statusCode = response.status;
-                    if (statusCode == 200){
+                    
+                    if (response.status == 200){
+                        
+                        const successMessage = response.data.message;
+                        
+                        const toastStore = useToastStore();
+                        toastStore.successToast(successMessage);
+
+
                         this.$router.push('/home');
                     }
                 } catch (error) {
-                    console.error('Error fetching contact:', error); 
+                    
+                    const errorMessage = error.response.data.errorMsg || error.response.data.message;
+                    
+                    const toastStore = useToastStore;
+                    toastStore.errorToast(errorMessage);
+
+                    this.$router.push('/home');
                 }
             },
             
@@ -104,16 +119,24 @@
             },
             
             async fetchContact() {
-                const id = this.$route.params.id; 
+                const id = this.$route.params.id;
                 
                 try {
                     const response = await api.get(`/contacts/${id}`);
                     this.contact = response.data.contact
-                    console.log('Contact details:', this.contact); 
-                    
-                    
+
                 } catch (error) {
-                    console.error('Error fetching contact:', error);
+                    if (error.response && error.response.data) {
+                      
+                        const errorMessage = error.response.data.message || error.response.data.errorMsg;
+                        
+                        const toastStore = useToastStore();
+                        toastStore.errorToast(errorMessage);
+                        
+                        this.$router.push('/home');
+                    } 
+                    
+                    this.$router.push('/home');
                 }
             },
             formatPhoneNumber(phone) {

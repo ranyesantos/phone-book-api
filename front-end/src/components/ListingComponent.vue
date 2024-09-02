@@ -52,10 +52,13 @@
   import logoutButton from './logoutButton.vue'
 
   export default {
+    
+
     name: 'ListingComponent',
     components: {
       logoutButton
     },
+
     props: {
       text: {
         type: String,
@@ -68,13 +71,15 @@
       headers: {
         type: Array,
         default: () => [] 
-      }
+      },
     },
+
     data() {
       return {
         defaultImage
       };
     },
+
     computed: {
       imageUrl() {
         return (id) => {
@@ -89,7 +94,6 @@
     
     methods: {
       
-      
       formatPhoneNumber(phone) {
         phone = phone.toString().replace(/\D/g, '');
 
@@ -101,6 +105,7 @@
           return phone;
         }
       },
+      
       viewDetails(id) {
         this.$router.push({ name: 'showContact', params: { id }})
       }
@@ -111,6 +116,8 @@
 </script>
 
 <style scoped>
+
+
 .item-list {
   display: flex;
   flex-direction: column;
