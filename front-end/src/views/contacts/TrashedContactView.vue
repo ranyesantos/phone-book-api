@@ -20,18 +20,29 @@
                             <h2>Detalhes do contato</h2>
                             <div class="actions">
 
-                                <a @click="edit">
-                                    <i class="fa-solid fa-pen"></i>
+                                <a @click="showRestoreModal = true">
+                                    <i class="fa-solid fa-trash-can-arrow-up"></i>
                                 </a>
 
                                 <a  @click="showModal = true">
                                     <i class="fa-solid fa-trash"></i>
                                 </a>
-                                <ModalDelete
-                                    :show="showModal"
-                                    @confirm="deleteBtn"
-                                    @cancel="showModal = false"
-                                />
+
+                                <ModalDelete :show="showModal" @confirm="deleteBtn" @cancel="showModal = false"> 
+                                    <template v-slot:message>
+                                        Tem certeza de que deseja excluir o contato permanentemente?
+                                    </template>
+                                </ModalDelete>
+
+                                <ModalDelete :show="showRestoreModal" @confirm="restoreContact" @cancel="showRestoreModal = false"> 
+                                    <template v-slot:title>
+                                        Restaurar Contato
+                                    </template>
+                                    <template v-slot:message>
+                                        Tem certeza de que deseja restaurar o contato?
+                                    </template>
+                                </ModalDelete>
+
                             </div>
                         </div>
                         <div class="contact-info">
@@ -70,6 +81,7 @@
                 contact: null,
                 defaultImage,
                 showModal: false,
+                showRestoreModal: false,
                 contactId: null,
             };
         },
@@ -88,10 +100,12 @@
         methods: {
             
             async deleteBtn() {
+
                 const id = this.$route.params.id; 
                 
                 try {
-                    const response = await api.delete(`/contacts/${id}`);
+
+                    const response = await api.delete(`/trash-bin/${id}`);
                     
                     if (response.status == 200){
                         
@@ -101,44 +115,70 @@
                         toastStore.successToast(successMessage);
 
 
-                        this.$router.push('/home');
+                        this.$router.push('/trash-bin');
                     }
+
                 } catch (error) {
                     
                     const errorMessage = error.response.data.errorMsg || error.response.data.message;
                     
-                    const toastStore = useToastStore;
+                    const toastStore = useToastStore();
                     toastStore.errorToast(errorMessage);
 
-                    this.$router.push('/home');
+                    this.$router.push('/trash-bin');
                 }
             },
             
-            edit() {
-                this.$router.push({ name: 'editContact', params: { id: this.id } });
-            },
-            
-            async fetchContact() {
+            async restoreContact() {
+
                 const id = this.$route.params.id;
                 
                 try {
-                    const response = await api.get(`/contacts/${id}`);
-                    this.contact = response.data.contact
+                    
+                    const response = await api.put(`/trash-bin/${id}`);
+                    
+                    if (response.status == 200) {
+                        const successMessage = response.data.message;
+
+                        const toastStore = useToastStore();
+                        toastStore.successToast(successMessage);
+                        
+                        this.$router.push('/home');
+                    }
 
                 } catch (error) {
+
+                    const errorMessage = error.response.data.errorMsg || error.response.data.message;
+
+                    const toastStore = useToastStore();
+                    toastStore.errorToast(errorMessage);
+
+                    this.$router.push('/trash-bin');
+
+                }
+            },
+            
+            async fetchContact() {
+
+                const id = this.$route.params.id;
+                
+                try {
+                    const response = await api.get(`/trash-bin/${id}`);
+                    this.contact = response.data.contact
+                    console.log(contact)
+                } catch (error) {
                     if (error.response && error.response.data) {
-                      
+                        
                         const errorMessage = error.response.data.message || error.response.data.errorMsg;
                         
                         const toastStore = useToastStore();
                         toastStore.errorToast(errorMessage);
                         
-                        this.$router.push('/home');
                     } 
                     
-                    this.$router.push('/home');
                 }
             },
+            
             formatPhoneNumber(phone) {
                 phone = phone.toString();
                 
@@ -328,7 +368,7 @@ h3 {
         flex-grow: 1
     }
     .contact-header {
-       width: 100%;
+        width: 100%;
     }
     .img-name {
         width: 100%;

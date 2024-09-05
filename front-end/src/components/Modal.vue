@@ -1,14 +1,18 @@
 <template>
-<div v-if="show" class="modal-overlay">
-    <div class="modal-content">
-        <h3>Confirmar Exclusão</h3>
-        <p>Você tem certeza de que deseja excluir este contato?</p>
-        <div class="modal-actions">
-            <button class="yesBtn" @click="confirmDelete">Sim</button>
-            <button class="noBtn" @click="cancelDelete">Não</button>
+    <div v-if="show" class="modal-overlay">
+        <div class="modal-content">
+            <h3>
+                <slot class="message" name="title">Confirmar Exclusão</slot>
+            </h3>
+            <p>
+                <slot class="message" name="message">Você tem certeza de que deseja excluir este contato?</slot>
+            </p>
+            <div class="modal-actions">
+                <button class="yesBtn" @click="confirm">Sim</button>
+                <button class="noBtn" @click="cancel">Não</button>
+            </div>
         </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -20,10 +24,10 @@ export default {
         }
     },
     methods: {
-        confirmDelete() {
+        confirm() {
             this.$emit('confirm');
         },
-        cancelDelete() {
+        cancel() {
             this.$emit('cancel');
         }
     }
@@ -36,11 +40,12 @@ export default {
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 9999;
 }
 
 button:hover {

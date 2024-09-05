@@ -7,9 +7,8 @@ use App\Http\Requests\ContactRequest;
 use App\Models\Contact;
 use Illuminate\Http\JsonResponse;
 use App\Services\ProfilePictureService;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-
 use Exception;
+
 
 class ContactController extends Controller
 {
@@ -141,9 +140,4 @@ class ContactController extends Controller
             ], 500);
         }
     }
-
-    // public function indexTrashBin(Contact $contacts): JsonResponse
-    // {
-
-    // }
 }

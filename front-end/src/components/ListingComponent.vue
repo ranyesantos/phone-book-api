@@ -107,7 +107,16 @@
       },
       
       viewDetails(id) {
-        this.$router.push({ name: 'showContact', params: { id }})
+
+        const contact = this.contacts.find(contact => contact.id === id);
+        console.log(contact)
+
+        if(contact.deleted_at != null){
+          this.$router.push({ name: 'showTrashedContact', params: { id }})   
+        } else {
+          this.$router.push({ name: 'showContact', params: { id }})
+        }
+
       }
     }
     

@@ -1,13 +1,17 @@
 <template>
     <aside class="sidebar">
         <ul class="sidebar-menu">
-            <li><router-link to="/home" class="sidebar-item"><i class="fa-solid fa-user"></i>Contatos</router-link></li>
-            <!-- <li><router-link to="/bin" class="sidebar-item"><i class="fa-solid fa-trash"></i>Lixeira</router-link></li> -->
+            <li>
+                <router-link to="/home" class="sidebar-item" active-class="active"><i class="fa-solid fa-user"></i>Contatos</router-link>
+            </li>
+            <li>
+                <router-link to="/trash-bin" class="sidebar-item" active-class="active"><i class="fa-solid fa-trash"></i>Lixeira</router-link>
+            </li>
             <logoutButton class="logout-btn" />
         </ul>
-        
     </aside>
 </template>
+
 
 <script>
     import logoutButton from './logoutButton.vue'
@@ -20,6 +24,13 @@
 </script>
 
 <style scoped>
+
+.sidebar-item.active {
+    background-color: #dad8d8c0;
+    color: rgb(0, 0, 0);
+    border-radius: 7px;
+}
+
 .sidebar {
     position: fixed;
     top: 60px; 

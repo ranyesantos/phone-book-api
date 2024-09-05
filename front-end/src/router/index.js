@@ -54,6 +54,20 @@ const router = createRouter({
           meta: { requiresAuth: true },
           props: true 
         },
+
+
+        {
+          path: '/trash-bin',
+          name: 'trash-bin',
+          component: () => import('../views/TrashBinView.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: '/trash-bin/:id',
+          name: 'showTrashedContact',
+          component: () => import('../views/contacts/TrashedContactView.vue'),
+          meta: { requiresAuth: true }
+        },
       ]
     }
 

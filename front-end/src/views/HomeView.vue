@@ -1,6 +1,5 @@
 <template>
   <div class="main">
-    <SideBar class="sidebar"/>
     <section class="content">
       <ListingComponent text="Contatos" class="listingComp" :headers="headers" :contacts="contacts"/>
       
@@ -15,7 +14,6 @@ import ListingComponent from '../components/ListingComponent.vue';
 import AddButton from '../components/AddButton.vue';
 import api from '../services/apiService';
 import { useToastStore } from '../stores/toast';
-import { errorMessages } from 'vue/compiler-sfc';
 
 export default {
 
