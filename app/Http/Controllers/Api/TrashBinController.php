@@ -40,7 +40,8 @@ class TrashBinController extends Controller
             $contact->restore();
             return response()->json([
                 'status' => true,
-                'message' => 'Contato restaurado com sucesso'
+                'message' => 'Contato restaurado com sucesso',
+                'contact' => $contact
             ], 200);
 
         } catch (Exception $e) {

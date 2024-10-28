@@ -12,7 +12,7 @@ use Exception;
 
 class ContactController extends Controller
 {
-    protected $profilePictureService;
+    private $profilePictureService;
 
     public function __construct(ProfilePictureService $profilePictureService)
     {
@@ -77,13 +77,13 @@ class ContactController extends Controller
 
             return response()->json([
                 'contact' => $contact,
-                'message' => 'Contato Adicionado'
+                'message' => 'Contato adicionado com sucesso'
             ], 201);
 
         } catch (Exception $e) {
             return response()->json([
                 'message' => $e->getMessage(),
-                'errorMsg' => 'Erro ao criar contato'
+                'errorMsg' => 'Erro ao adicionar contato'
             ], 500);
         }
     }
@@ -104,13 +104,13 @@ class ContactController extends Controller
 
             if ($contact->wasChanged()) {
                 return response()->json([
-                    'message' => 'Contato atualizado com sucesso',
-                    'contact' => $contact
+                    'contact' => $contact,
+                    'message' => 'Contato atualizado com sucesso'
                 ], 200);
             } else {
                 return response()->json([
-                    'message' => 'Nenhuma alteração foi feita no contato',
-                    'contact' => $contact
+                    'contact' => $contact,
+                    'message' => 'Nenhuma alteração foi feita no contato'
                 ], 200);
             }
 

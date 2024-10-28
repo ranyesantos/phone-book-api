@@ -6,12 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AuthRequest;
 use App\Models\User;
 use Auth;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class AuthController extends Controller
 {
-    public function store(AuthRequest $request): Response
+    public function store(AuthRequest $request): JsonResponse
     {
 
         User::create([
@@ -20,12 +21,15 @@ class AuthController extends Controller
             'password' => bcrypt($request->password)
         ]);
 
-        return response(200);
+        return response()->json([
+            'status' => true,
+            'message' => 'usuário cadastrado com sucesso'
+        ], 200);
 
 
     }
 
-    public function login(Request $request)
+    public function login(Request $request): JsonResponse
     {
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])){
 
