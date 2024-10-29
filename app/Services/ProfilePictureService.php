@@ -1,44 +1,39 @@
 <?php
 
 namespace App\Services;
-
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class ProfilePictureService
 {
-    public function updateProfilePicture(Request $request, $contact)
+    public function updateProfilePicture($file, $oldFile, $removePfp): mixed
     {
-        //receives actual 'profile_picture' value
-        $filePath = $contact->profile_picture;
+        if ($removePfp){
+            $this->deleteProfilePicture($oldFile);
+            return null;
 
-        //if a file was received, set the current picture and delete the old one
-        if ($request->hasFile('profile_picture')) {
-            if ($filePath && Storage::disk('public')->exists($filePath)) {
-                Storage::disk('public')->delete($filePath);
-            }
-
-            $file = $request->file('profile_picture');
-            $filePath = $file->store('profile_pictures', 'public');
-
-        } elseif ($request->remove_pfp) {
-            //if 'remove_pfp' has a value of "true", the old picture is deleted and $filePath receives a null value
-            if ($filePath && Storage::disk('public')->exists($filePath)) {
-                Storage::disk('public')->delete($filePath);
-            }
-            $filePath = null;
         }
 
-        return $filePath;
+        if ($oldFile && Storage::disk('public')->exists($oldFile)) {
+            $this->deleteProfilePicture($oldFile);
+
+        }
+
+        $newFile = $this->setProfilePicture($file);
+
+        return $newFile;
+
     }
 
-    public function setProfilePicture($request)
+    public function setProfilePicture($file): mixed
     {
-        if ($request->hasFile('profile_picture')) {
-            return $request->file('profile_picture')->store('profile_pictures', 'public');
-        }
+        return $file->store('profile_pictures', 'public');
 
-        return null;
+    }
+
+    public function deleteProfilePicture($filePath): void
+    {
+        Storage::disk('public')->delete($filePath);
+
     }
 
 }

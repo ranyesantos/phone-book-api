@@ -5,18 +5,18 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ContactRequest;
 use App\Models\Contact;
+use App\Services\ContactService;
 use Illuminate\Http\JsonResponse;
-use App\Services\ProfilePictureService;
 use Exception;
 
 
 class ContactController extends Controller
 {
-    private $profilePictureService;
+    protected $contactService;
 
-    public function __construct(ProfilePictureService $profilePictureService)
+    public function __construct(ContactService $contactService)
     {
-        $this->profilePictureService = $profilePictureService;
+        $this->contactService = $contactService;
     }
 
     /**
@@ -68,51 +68,35 @@ class ContactController extends Controller
     {
         try {
 
-            $contact = Contact::create([
-                'name' => $request->name,
-                'phone' => $request->phone,
-                'email' => $request->email,
-                'profile_picture' => $this->profilePictureService->setProfilePicture($request)
-            ]);
+            $data = $this->contactService->createContact($request);
 
             return response()->json([
-                'contact' => $contact,
-                'message' => 'Contato adicionado com sucesso'
+                'contact' => $data['contact'],
+                'message' => $data['message']
             ], 201);
 
         } catch (Exception $e) {
             return response()->json([
-                'message' => $e->getMessage(),
-                'errorMsg' => 'Erro ao adicionar contato'
+                'contact' => null,
+                'message' => 'Erro ao adicionar contato'
             ], 500);
+
         }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(ContactRequest $request, Contact $contact): JsonResponse
+    public function update(ContactRequest $request, Contact $contact)
     {
         try {
+            $data = $this->contactService->updateContact($request, $contact);
 
-            $contact->update([
-                'name' => $request->input('name'),
-                'phone' => $request->input('phone'),
-                'email' => $request->input('email'),
-                'profile_picture' => $this->profilePictureService->updateProfilePicture($request, $contact)
-            ]);
+            return response()->json([
+                'contact' => $data['contact'],
+                'message' => $data['message']
+            ], 200);
 
-            if ($contact->wasChanged()) {
-                return response()->json([
-                    'contact' => $contact,
-                    'message' => 'Contato atualizado com sucesso'
-                ], 200);
-            } else {
-                return response()->json([
-                    'contact' => $contact,
-                    'message' => 'Nenhuma alteração foi feita no contato'
-                ], 200);
-            }
 
         } catch (Exception $e) {
             return response()->json([
@@ -128,16 +112,19 @@ class ContactController extends Controller
     public function destroy(Contact $contact): JsonResponse
     {
         try {
-            $contact->delete();
+            $data = $this->contactService->deleteContact($contact);
             return response()->json([
                 'status' => true,
-                'message' => 'Contato apagado com sucesso',
+                'contact' => $data['contact'],
+                'message' => $data['message']
             ], 200);
+
         } catch (Exception $e) {
             return response()->json([
                 'message' => $e->getMessage(),
                 'errorMsg' => 'Erro ao apagar contato'
             ], 500);
+            
         }
     }
 }
